@@ -23,10 +23,11 @@ This project demonstrates a secure AWS environment setup using Terraform.
 terraform init
 terraform apply
 
-### AWSIaCSecure
+## AWSIaCSecure
 Creating a secure AWS environment using IaC
 
 1. First we will create an AWS account (if you already have one, you are good to go). Then, we will install and configure the AWS CLI on our local machine.
+
 # Install AWS CLI
 pip install awscli
 
@@ -34,6 +35,7 @@ pip install awscli
 aws configure
 
 2. Next we will get started with the Infrastructure as Code (IaC) by creating a Terraform configuration file (main.tf) to define our AWS infrastructure.
+
 # main.tf
 provider "aws" {
   region = "us-east-1"
@@ -48,12 +50,12 @@ resource "aws_subnet" "subnet1" {
   cidr_block = "10.0.1.0/24"
 }
 
-Initialize and apply
+3. Initialize and apply
 
 terraform init
 terraform apply
 
-Very important to secure everything with IAM and we will secure our S3 Buckets with a bucket policy
+4.Very important to secure everything with IAM and we will secure our S3 Buckets with a bucket policy
 
 # IAM roles and policies
 resource "aws_iam_role" "example" {
@@ -96,7 +98,7 @@ resource "aws_iam_role_policy_attachment" "example_attach" {
   policy_arn = aws_iam_policy.example_policy.arn
 }
 
-Securing our buckets and encrypting the data with server side encryption.
+5. Securing our buckets and encrypting the data with server side encryption.
 
 # S3 bucket with encryption and logging
 resource "aws_s3_bucket" "example" {
@@ -117,7 +119,7 @@ resource "aws_s3_bucket" "example" {
   }
 }
 
-Launch an EC2 instance. We use t2.micro because it saves cost.
+6. Launch an EC2 instance. We use t2.micro because it saves cost.
 
 # EC2 instance with security group
 resource "aws_security_group" "web_sg" {
@@ -150,7 +152,8 @@ resource "aws_instance" "web" {
   }
 }
 
-Every environment needs a database so we will launch a secure RDS instance. RDS automates database management tasks, such as provisioning, configuring, backups, and patching
+7. Every environment needs a database so we will launch a secure RDS instance. RDS automates database management tasks, such as provisioning, configuring, backups, and patching
+
 # RDS instance
 resource "aws_db_instance" "default" {
   identifier              = "mydb"
@@ -159,9 +162,9 @@ resource "aws_db_instance" "default" {
   engine                  = "mysql"
   engine_version          = "8.0"
   instance_class          = "db.t2.micro"
-  name                    = "mydatabase"
-  username                = "foo"
-  password                = "foobarbaz"
+  name                    = "whateveryouwanttonameitbecauseitsyourproject"
+  username                = "hiringmanager"
+  password                = "anythingbesidesadminorpassword1234"
   parameter_group_name    = "default.mysql8.0"
   publicly_accessible     = false
   skip_final_snapshot     = true
@@ -169,7 +172,7 @@ resource "aws_db_instance" "default" {
   vpc_security_group_ids = [aws_security_group.web_sg.id]
 }
 
-CloudTrail is a service that helps enable operational and risk auditing, governance, and compliance of your AWS account. Actions taken by a user, role, or an AWS service are recorded as events in CloudTrail.
+8. CloudTrail is a service that helps enable operational and risk auditing, governance, and compliance of your AWS account. Actions taken by a user, role, or an AWS service are recorded as events in CloudTrail.
 
 # CloudTrail
 resource "aws_cloudtrail" "example" {
@@ -180,14 +183,14 @@ resource "aws_cloudtrail" "example" {
   enable_log_file_validation    = true
 }
 
-Cloudwatch provides insights on logs we monitor and can be used to determine system health.
+9. Cloudwatch provides insights on logs we monitor and can be used to determine system health.
 
 # CloudWatch log group
 resource "aws_cloudwatch_log_group" "example" {
   name = "/aws/cloudtrail/example"
 }
 
-Availability is a great reason why AWS is so amazing. We need to make sure we have backups so we never have downtime in the event of a problem.
+10. Availability is a great reason why AWS is so amazing. We need to make sure we have backups so we never have downtime in the event of a problem.
 
 # EC2 backup
 resource "aws_backup_plan" "ec2_backup" {
